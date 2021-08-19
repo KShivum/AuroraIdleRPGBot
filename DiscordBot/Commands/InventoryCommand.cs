@@ -14,20 +14,11 @@ namespace DiscordBot.Commands
 {
     public class InventoryCommand : BaseCommandModule
     {
+        //Test
         [Command("inventory")]
-        public async Task Inventory(CommandContext ctx, [Description("Does not work for card")] bool inChat = true, [Description("cards is not really supported")] string format = "list")
+        public async Task Inventory(CommandContext ctx, [Description("Does not work for card")] bool inChat = true)
         {
-            if (!(format.Equals("card") || format.Equals("list")))
-            {
-                var wrongFormatEmbed = new DiscordEmbedBuilder
-                {
-                    Title = "Unknown format",
-                    Description = "Please use either card or list",
-                    Color = DiscordColor.Red
-                };
-                var wrongFormat = await ctx.Channel.SendMessageAsync(embed: wrongFormatEmbed).ConfigureAwait(false);
-                return;
-            }
+
 
             List<Item> items = new List<Item>();
             DataSet ds = new DataSet();
@@ -66,207 +57,107 @@ namespace DiscordBot.Commands
 
 
 
-            if (format.Equals("card"))
+
+
+            int index = 0;
+            int prevIndex = 0;
+
+            var interactivity = ctx.Client.GetInteractivity();
+
+            while (true)
             {
-                var dmChannel = await ctx.Member.CreateDmChannelAsync();
-                int index = 0;
-
-                List<DiscordMessage> messages = new List<DiscordMessage>();
-                var interactivity = ctx.Client.GetInteractivity();
-
-
-                while (true)
+                prevIndex = index;
+                var embed = new DiscordEmbedBuilder
                 {
-                    for (int i = 0; i < 5; i++)
+                    Title = "Inventory"
+                };
+                int target = index + 20;
+                for (int i = index; i < target; i++)
+                {
+                    if (index >= items.Count)
                     {
-                        if (index >= items.Count)
-                        {
-                            break;
-                        }
-                        var tempMessage = await dmChannel.SendMessageAsync(embed: items[index].GetItemStats()).ConfigureAwait(false);
-                        messages.Add(tempMessage);
-                        index++;
+                        break;
                     }
-
-                    var infoEmbed = new DiscordEmbedBuilder
-                    {
-                        Title = $"Showing items {index - 5} to {index} out of {items.Count}"
-                    };
-
-                    var info = await dmChannel.SendMessageAsync(embed: infoEmbed).ConfigureAwait(false);
-                    DiscordEmoji left = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
-                    DiscordEmoji right = DiscordEmoji.FromName(ctx.Client, ":arrow_right:");
-                    DiscordEmoji xEmoji = DiscordEmoji.FromName(ctx.Client, ":x:");
-
-                    if (index < items.Count - 1)
-                    {
-                        await info.CreateReactionAsync(right);
-                    }
-                    if (index >= 5)
-                    {
-                        await info.CreateReactionAsync(left);
-                    }
-
-
-                    await info.CreateReactionAsync(xEmoji);
-
-                    var result = await interactivity.WaitForReactionAsync((x) => x.Emoji == left || x.Emoji == right || x.Emoji == xEmoji, info, ctx.User, TimeSpan.FromMinutes(2)).ConfigureAwait(false);
-
-                    if (result.Result == null)
-                    {
-                        //TODO add timeout embed
-                        for (int i = 0; i < messages.Count; i++)
-                        {
-                            await dmChannel.DeleteMessageAsync(messages[i]).ConfigureAwait(false);
-                        }
-                        messages.Clear();
-                        await dmChannel.DeleteMessageAsync(info).ConfigureAwait(false);
-                        return;
-                    }
-
-                    if (result.Result.Emoji == right)
-                    {
-                        //Too tired to fix it right now, but the user could possibly add the reaction themself and mess stuff up
-                        for (int i = 0; i < messages.Count; i++)
-                        {
-                            await dmChannel.DeleteMessageAsync(messages[i]).ConfigureAwait(false);
-                        }
-                        messages.Clear();
-                        await dmChannel.DeleteMessageAsync(info).ConfigureAwait(false);
-                        continue;
-                    }
-
-                    if (result.Result.Emoji == left)
-                    {
-                        index -= 5;
-                        for (int i = 0; i < messages.Count; i++)
-                        {
-                            await dmChannel.DeleteMessageAsync(messages[i]).ConfigureAwait(false);
-                        }
-                        messages.Clear();
-                        await dmChannel.DeleteMessageAsync(info).ConfigureAwait(false);
-                        continue;
-                    }
-                    if (result.Result.Emoji == xEmoji)
-                    {
-                        for (int i = 0; i < messages.Count; i++)
-                        {
-                            await dmChannel.DeleteMessageAsync(messages[i]).ConfigureAwait(false);
-                        }
-                        messages.Clear();
-                        await dmChannel.DeleteMessageAsync(info).ConfigureAwait(false);
-                        return;
-                    }
-
-
-
-
+                    embed.AddField(items[i].Name, items[i].GetItemStatStringWithID());
+                    index++;
                 }
 
+                embed.WithFooter($"{prevIndex + 1} - {index} out of {items.Count}");
 
+                //var info = await ctx.Channel.SendMessageAsync(embed: embed).ConfigureAwait(false);
+                //DiscordEmoji left = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
+                //DiscordEmoji right = DiscordEmoji.FromName(ctx.Client, ":arrow_right:");
+                //DiscordEmoji xEmoji = DiscordEmoji.FromName(ctx.Client, ":x:");
 
-            }
-            else if (format.Equals("list"))
-            {
-                int index = 0;
-                int prevIndex = 0;
-
-                var interactivity = ctx.Client.GetInteractivity();
-
-                while (true)
+                DiscordButtonComponent left, right, x;
+                if (index < items.Count - 1)
                 {
-                    prevIndex = index;
-                    var embed = new DiscordEmbedBuilder
-                    {
-                        Title = "Inventory"
-                    };
-                    int target = index + 20;
-                    for (int i = index; i < target; i++)
-                    {
-                        if (index >= items.Count)
-                        {
-                            break;
-                        }
-                        embed.AddField(items[i].Name, items[i].GetItemStatStringWithID());
-                        index++;
-                    }
+                    //await info.CreateReactionAsync(right);
+                    right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️");
+                }
+                else
+                {
+                    right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️", true);
+                }
 
-                    embed.WithFooter($"{prevIndex + 1} - {index} out of {items.Count}");
+                x = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnX", "❌");
 
-                    //var info = await ctx.Channel.SendMessageAsync(embed: embed).ConfigureAwait(false);
-                    //DiscordEmoji left = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
-                    //DiscordEmoji right = DiscordEmoji.FromName(ctx.Client, ":arrow_right:");
-                    //DiscordEmoji xEmoji = DiscordEmoji.FromName(ctx.Client, ":x:");
-
-                    DiscordButtonComponent left, right, x;
-                    if (index < items.Count - 1)
-                    {
-                        //await info.CreateReactionAsync(right);
-                        right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️");
-                    }
-                    else
-                    {
-                        right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️", true);
-                    }
-
-                    x = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnX", "❌");
-
-                    if (index >= 21)
-                    {
-                        //await info.CreateReactionAsync(left);
-                        left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️");
-                    }
-                    else
-                    {
-                        left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️", true);
-                    }
-                    var message = await new DiscordMessageBuilder()
-                    .WithEmbed(embed)
-                    .AddComponents(new DiscordComponent[] {
+                if (index >= 21)
+                {
+                    //await info.CreateReactionAsync(left);
+                    left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️");
+                }
+                else
+                {
+                    left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️", true);
+                }
+                var message = await new DiscordMessageBuilder()
+                .WithEmbed(embed)
+                .AddComponents(new DiscordComponent[] {
                         left, x, right
-                    }).SendAsync(ctx.Channel);
+                }).SendAsync(ctx.Channel);
 
 
 
-                    var result = await interactivity.WaitForButtonAsync(message, TimeSpan.FromMinutes(2)).ConfigureAwait(false);
+                var result = await interactivity.WaitForButtonAsync(message, TimeSpan.FromMinutes(2)).ConfigureAwait(false);
 
-                    if (result.Result == null)
-                    {
-                        //TODO add timeout embed
+                if (result.Result == null)
+                {
+                    //TODO add timeout embed
 
-                        await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
-                        return;
-                    }
+                    await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
+                    return;
+                }
 
-                    if (result.Result.Id == "btnRight")
-                    {
-                        //Too tired to fix it right now, but the user could possibly add the reaction themself and mess stuff up
+                if (result.Result.Id == "btnRight")
+                {
+                    //Too tired to fix it right now, but the user could possibly add the reaction themself and mess stuff up
 
-                        await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
-                        continue;
-                    }
+                    await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
+                    continue;
+                }
 
-                    if (result.Result.Id == "btnLeft")
-                    {
-                        index = index - (index % 20) - 20;
+                if (result.Result.Id == "btnLeft")
+                {
+                    index = index - (index % 20) - 20;
 
-                        await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
-                        continue;
-                    }
-                    if (result.Result.Id == "btnX")
-                    {
+                    await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
+                    continue;
+                }
+                if (result.Result.Id == "btnX")
+                {
 
-                        await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
-                        return;
-                    }
-
-
-
-
+                    await ctx.Channel.DeleteMessageAsync(message).ConfigureAwait(false);
+                    return;
                 }
 
 
+
+
             }
+
+
+
 
 
         }
