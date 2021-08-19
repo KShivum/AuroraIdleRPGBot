@@ -1,0 +1,16 @@
+
+DiscordBot/obj
+
+DiscordBot/bin
+DiscordBot/DiscordBot/App.config
+.vscode
+DiscordBot/.vscode
+
+=======
+config.json
+
+DiscordBot/.vs/
+
+DiscordBot/App.config
+
+.vs/
