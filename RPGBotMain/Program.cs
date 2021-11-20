@@ -63,6 +63,7 @@ namespace RPGBotMain
 
             //Loading Commands
             commands.RegisterCommands<CreatePlayer>();
+            commands.RegisterCommands<ItemCommands>();
 
             await discord.ConnectAsync();
             await Task.Delay(-1);
