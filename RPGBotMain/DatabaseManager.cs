@@ -44,7 +44,7 @@ namespace RPGBotMain
                 if (e.ToString().Contains("Invalid object"))
                 {
                     Console.WriteLine("Creating User Table");
-                    SqlCommand cmd = new SqlCommand("CREATE TABLE [dbo].[Item]([Id] [int] IDENTITY(1,1) NOT NULL,[ItemName] [varchar](max) NOT NULL,[Stat1] [int] NULL,[Stat2] [int] NULL,[Stat3] [int] NULL,[Stat4] [int] NULL,[Equipped] [bit] NOT NULL,[Owner] [varchar](max) NULL)", con);
+                    SqlCommand cmd = new SqlCommand("CREATE TABLE [dbo].[Item]([Id] [int] IDENTITY(1,1) NOT NULL,[ItemName] [varchar](max) NOT NULL, [ItemType] [varchar](max) NOT NULL, [Stat1] [int] NULL,[Stat2] [int] NULL,[Stat3] [int] NULL,[Stat4] [int] NULL,[Equipped] [bit] NOT NULL,[Owner] [varchar](max) NULL)", con);
                     cmd.ExecuteNonQuery();
     
                 }

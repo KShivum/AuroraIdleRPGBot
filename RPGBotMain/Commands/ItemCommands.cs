@@ -19,7 +19,7 @@ namespace RPGBotMain.Commands
         [Command("item")]
         public async Task CreateItem(CommandContext ctx)
         {
-            Item item = new Item("Wooden Sword", (int)(new Random()).NextInt64(15), 0, null, null, false, ctx.User.Id.ToString());
+            Item item = new Item("Wooden Sword", "Sword", (int)(new Random()).NextInt64(15), 0, null, null, false, ctx.User.Id.ToString());
             item.Create(con);
             await ctx.RespondAsync($"{ctx.User.Mention} created an item!");
         }
@@ -70,7 +70,7 @@ namespace RPGBotMain.Commands
                         break;
                     }
 
-                    embed.AddField($"Id: {dt.Rows[i]["Id"]}", $"{dt.Rows[i]["ItemName"]}: {dt.Rows[i]["Stat1"]} {dt.Rows[i]["Stat2"]} {dt.Rows[i]["Stat3"]} {dt.Rows[i]["Stat4"]}");
+                    embed.AddField($"Id: {dt.Rows[i]["Id"]}",  $"{dt.Rows[i]["ItemType"]} {dt.Rows[i]["ItemName"]}: {dt.Rows[i]["Stat1"]} {dt.Rows[i]["Stat2"]} {dt.Rows[i]["Stat3"]} {dt.Rows[i]["Stat4"]}");
                 }
 
                 var LeftArrow = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "Left", "Left", false, new DiscordComponentEmoji(DiscordEmoji.FromName(ctx.Client, ":arrow_left:")));

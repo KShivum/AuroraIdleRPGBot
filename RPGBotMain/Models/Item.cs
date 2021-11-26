@@ -8,6 +8,7 @@ namespace RPGBotMain.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ItemType {get; set;}
         public int? Stat1 { get; set; }
         public int? Stat2 { get; set; }
         public int? Stat3 { get; set; }
@@ -16,9 +17,10 @@ namespace RPGBotMain.Models
         public string Owner { get; set; }
 
 
-        public Item(string name, int? stat1, int? stat2, int? stat3, int? stat4, bool isEquipped, string owner)
+        public Item(string name,string itemType, int? stat1, int? stat2, int? stat3, int? stat4, bool isEquipped, string owner)
         {
             Name = name;
+            ItemType = itemType;
             Stat1 = stat1;
             Stat2 = stat2;
             Stat3 = stat3;
@@ -39,6 +41,7 @@ namespace RPGBotMain.Models
 
             Id = id;
             Name = dt.Rows[0]["Name"].ToString();
+            ItemType = dt.Rows[0]["ItemType"].ToString();
             if (dt.Rows[0]["Stat1"] != DBNull.Value)
                 Stat1 = Convert.ToInt32(dt.Rows[0]["Stat1"]);
             if (dt.Rows[0]["Stat2"] != DBNull.Value)
@@ -56,7 +59,7 @@ namespace RPGBotMain.Models
 
         public void Create(SqlConnection con)
         {
-            string query = $"INSERT INTO Item (ItemName, Stat1, Stat2, Stat3, Stat4, Equipped, Owner) VALUES ('{Name}',";
+            string query = $"INSERT INTO Item (ItemName, ItemType, Stat1, Stat2, Stat3, Stat4, Equipped, Owner) VALUES ('{Name}', '{ItemType}',";
             if (Stat1 != null)
                 query += $"{Stat1},";
             else
@@ -98,6 +101,7 @@ namespace RPGBotMain.Models
 
             this.Id = Id;
             Name = dt.Rows[0]["Name"].ToString();
+            ItemType = dt.Rows[0]["ItemType"].ToString();
             if (dt.Rows[0]["Stat1"] != DBNull.Value)
                 Stat1 = Convert.ToInt32(dt.Rows[0]["Stat1"]);
             if (dt.Rows[0]["Stat2"] != DBNull.Value)
