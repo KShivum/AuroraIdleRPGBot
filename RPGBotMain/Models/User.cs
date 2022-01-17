@@ -9,6 +9,10 @@ namespace RPGBotMain.Models
         public string Id { get; set; }
         public string Username { get; set; }
         public int Xp { get; set; }
+        public int Attack { get; set; }
+        public int Defense { get; set; }
+        public int Speed { get; set; }
+        public int Money { get; set; }
 
         public User(SqlConnection con, string id)
         {

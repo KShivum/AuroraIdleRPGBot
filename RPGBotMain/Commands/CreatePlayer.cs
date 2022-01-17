@@ -12,23 +12,20 @@ namespace RPGBotMain.Commands
 {
     public class CreatePlayer : BaseCommandModule
     {
-        public SqlConnection con {private get; set; }
-        [Command("Start")]
+        public static SqlConnection con { private get; set; }
+        [Command("start")]
         public async Task Start(CommandContext ctx)
         {
             var interactivity = ctx.Client.GetInteractivity();
 
-
-            SqlDataAdapter adapter = new SqlDataAdapter($"Select * from Users WHERE Id = '{ctx.User.Id}'",con);
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            if(dt.Rows.Count != 0)
+            if(CheckIfPlayerExists(ctx.User.Id))
             {
                 var message = await ctx.RespondAsync("You already have a character!");
                 await Task.Delay(5000);
-                await ctx.Channel.DeleteMessagesAsync(new List<DiscordMessage> { message , ctx.Message});
+                await ctx.Channel.DeleteMessagesAsync(new List<DiscordMessage> { message, ctx.Message });
                 return;
             }
+
 
 
             var intro = await ctx.Channel.SendMessageAsync("Hello, " + ctx.User.Username + "! Welcome to the RPG Bot!");
@@ -38,14 +35,14 @@ namespace RPGBotMain.Commands
             var username = await ctx.Message.GetNextMessageAsync();
 
             //TODO do some type of profanity check or something
-            if(username.TimedOut)
+            if (username.TimedOut)
             {
                 return;
             }
-            SqlCommand cmd  = new SqlCommand("Insert into Users (Id, PlayerName, Xp) Values(@id, @username, 0);", con);
+            SqlCommand cmd = new SqlCommand("Insert into Users (Id, PlayerName, Xp, Attack, Defense, Speed, Money) Values(@id, @username, 0, 0, 0, 0, 0);", con);
 
-            SqlParameter idParam = new SqlParameter("@id",System.Data.SqlDbType.VarChar, 255);
-            SqlParameter usernameParam = new SqlParameter("@username",System.Data.SqlDbType.VarChar, 255);
+            SqlParameter idParam = new SqlParameter("@id", System.Data.SqlDbType.VarChar, 255);
+            SqlParameter usernameParam = new SqlParameter("@username", System.Data.SqlDbType.VarChar, 255);
 
             idParam.Value = ctx.User.Id.ToString();
             usernameParam.Value = username.Result.Content.ToString();
@@ -61,6 +58,19 @@ namespace RPGBotMain.Commands
 
             await ctx.Channel.DeleteMessagesAsync(new List<DiscordMessage>() { intro, intro2, intro3, ctx.Message, username.Result });
 
+
+        }
+
+        public static bool CheckIfPlayerExists(ulong id)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter($"Select * from Users WHERE Id = '{id}'", con);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            if (dt.Rows.Count != 0)
+            {
+                return true;
+            }
+            return false;
 
         }
     }

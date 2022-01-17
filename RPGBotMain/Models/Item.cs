@@ -28,6 +28,15 @@ namespace RPGBotMain.Models
             IsEquipped = isEquipped;
             Owner = owner;
         }
+        public Item(string name,string itemType, int? stat1, int? stat2, int? stat3, int? stat4)
+        {
+            Name = name;
+            ItemType = itemType;
+            Stat1 = stat1;
+            Stat2 = stat2;
+            Stat3 = stat3;
+            Stat4 = stat4;
+        }
         public Item()
         {
         }
