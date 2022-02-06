@@ -36,6 +36,7 @@ namespace RPGBotMain.Commands
                 {
                     //TODO:
                     //Complete adventure and calculate events, loot, and xp
+                    
                 }
                 else
                 {
@@ -64,8 +65,12 @@ namespace RPGBotMain.Commands
 
             var adventures = Adventure.GetAdventures();
 
-            while (true)
+
+            //TODO: Allow player to choose adventure
+
+            /* while (true)
             {
+                var message = new DiscordMessageBuilder();
                 var embed = new DiscordEmbedBuilder();
 
                 embed.WithTitle("Adventure");
@@ -73,7 +78,15 @@ namespace RPGBotMain.Commands
 
                 embed.AddField($"Id: {adventures[selectedAdventure].Id}", $"{adventures[selectedAdventure].Name}");
                 //TODO: Add buttons to message
-            }
+                var LeftArrow = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "Left", "Left", false, new DiscordComponentEmoji(DiscordEmoji.FromName(ctx.Client, ":arrow_left:")));
+                var Exit = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "Exit", "Exit", false, new DiscordComponentEmoji(DiscordEmoji.FromName(ctx.Client, ":x:")));
+                var RightArrow = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "Right", "Right", false, new DiscordComponentEmoji(DiscordEmoji.FromName(ctx.Client, ":arrow_right:")));
+
+                message.WithEmbed(embed);
+
+                //message.AddComponent(LeftArrow, RightArrow, Exit);
+
+            } */
 
 
 
