@@ -24,7 +24,6 @@
 		"jmrog.vscode-nuget-package-manager",
 		"albert.tabout",
 		"fernandoescolar.vscode-solution-explorer",
-		"wakatime.vscode-wakatime"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
