@@ -64,10 +64,15 @@ class Program
 
         discord.UseInteractivity(new InteractivityConfiguration(){
             Timeout = TimeSpan.FromSeconds(120),
+            ResponseBehavior = DSharpPlus.Interactivity.Enums.InteractionResponseBehavior.Ack,
         });
 
 
         commands.RegisterCommands<AuroraDiscordBot.Commands.CreatePlayer>();
+        commands.RegisterCommands<AuroraDiscordBot.Commands.CreateItem>();
+        commands.RegisterCommands<AuroraDiscordBot.Commands.Inventory>();
+
+
         await discord.ConnectAsync();
         await Task.Delay(-1);
     }

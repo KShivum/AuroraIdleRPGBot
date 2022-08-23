@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 public class RPGBotDBContext : DbContext
 {
     public DbSet<Player> Players { get; set; }
+    public DbSet<Item> Items { get; set; }
 
     public RPGBotDBContext()
     {
@@ -29,6 +30,8 @@ public class RPGBotDBContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        modelBuilder.Entity<Player>().Property(p => p.Id).HasConversion<string>();
     }
 
 
