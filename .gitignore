@@ -1,0 +1,6 @@
+**/App.config
+**/.vscode
+**/bin/*
+**/obj/*
+**/config.cfg
+**/appsettings.json
