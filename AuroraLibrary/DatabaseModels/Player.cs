@@ -19,6 +19,7 @@ public class Player
     public int Speed { get; set; } = 1;
     [Required]
     public int Strength { get; set; } = 1;
+    public DateTime StartedAdventure { get; set; }
     public ICollection<Item> Items { get; set; }
 
 }

@@ -14,7 +14,7 @@ public class Item
     [Required]
     public int Value { get; set; }
     [Required]
-    public string Type { get; set; }
+    public ItemTypes Type{ get; set; }
     public bool Equipped { get; set; }
     public string? Atttribute1Label { get; set; }
     public int Atttribute1Value { get; set; }
@@ -24,5 +24,11 @@ public class Item
     public int Atttribute3Value { get; set; }
     public string? Atttribute4Label { get; set; }
     public int Atttribute4Value { get; set; }
+}
 
+public enum ItemTypes
+{
+    Material,
+    Sword,
+    Consumable
 }

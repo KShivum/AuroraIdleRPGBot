@@ -29,7 +29,7 @@ public class CreateItem : BaseCommandModule
             Name = "Sword",
             Description = "This is a new item",
             Value = 0,
-            Type = "Weapon",
+            Type = ItemTypes.Sword,
             Equipped = false,
             Atttribute1Label = "Attack",
             Atttribute1Value = 3,
