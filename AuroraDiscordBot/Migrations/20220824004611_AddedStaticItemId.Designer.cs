@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AuroraDiscordBot.Migrations
 {
     [DbContext(typeof(RPGBotDBContext))]
-    partial class RPGBotDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220824004611_AddedStaticItemId")]
+    partial class AddedStaticItemId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,7 +91,7 @@ namespace AuroraDiscordBot.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("VARCHAR(255)");
 
-                    b.Property<int?>("AdventureId")
+                    b.Property<int>("AdventureId")
                         .HasColumnType("int");
 
                     b.Property<int>("Experience")
@@ -108,7 +110,7 @@ namespace AuroraDiscordBot.Migrations
                     b.Property<int>("Speed")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("StartedAdventure")
+                    b.Property<DateTime>("StartedAdventure")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Strength")

@@ -71,6 +71,7 @@ class Program
         commands.RegisterCommands<AuroraDiscordBot.Commands.CreatePlayer>();
         commands.RegisterCommands<AuroraDiscordBot.Commands.CreateItem>();
         commands.RegisterCommands<AuroraDiscordBot.Commands.Inventory>();
+        commands.RegisterCommands<AuroraDiscordBot.Commands.AdventureCommands>();
 
 
         await discord.ConnectAsync();

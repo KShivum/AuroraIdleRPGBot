@@ -6,6 +6,7 @@ public class Item
 {
     [Key]
     public int Id { get; set; }
+    public int StaticItemId { get; set; }
     public Player Owner { get; set; }
     [Required]
     public string Name { get; set; }
