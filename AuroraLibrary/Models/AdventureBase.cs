@@ -8,6 +8,8 @@ namespace AuroraLibrary.Models
         public virtual string Name { get; protected set; } = "";
         public virtual string Description { get; protected set; } = "";
         public virtual TimeSpan Duration { get; protected set; }
+        public virtual int StrengthRecommended { get; protected set; } = 0;
+        public virtual int SpeedRecommended { get; protected set; } = 0;
         public virtual List<ItemChance> DropableItems { get; protected set; } = new List<ItemChance>();
     }
 

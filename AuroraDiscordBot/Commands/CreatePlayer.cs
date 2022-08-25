@@ -51,8 +51,8 @@ public class CreatePlayer : BaseCommandModule
             Gold = startingGold,
             Level = 1,
             Experience = 0,
-            Speed = 1,
-            Strength = 1,
+            Speed = 5,
+            Strength = 5,
         };
         db.Players.Add(player);
         await db.SaveChangesAsync();

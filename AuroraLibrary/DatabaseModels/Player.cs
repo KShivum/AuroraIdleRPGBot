@@ -5,7 +5,8 @@ namespace AuroraLibrary.DatabaseModels;
 
 public class Player
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.None)] [Column(TypeName = "VARCHAR(255)")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [Column(TypeName = "VARCHAR(255)")]
     public ulong Id { get; set; }
     [Required]
     public string PlayerName { get; set; }
@@ -21,6 +22,7 @@ public class Player
     public int Strength { get; set; } = 1;
     public DateTime? StartedAdventure { get; set; }
     public int? AdventureId { get; set; }
+    public bool? PassedAdventure { get; set; }
     public ICollection<Item> Items { get; set; }
 
 }
