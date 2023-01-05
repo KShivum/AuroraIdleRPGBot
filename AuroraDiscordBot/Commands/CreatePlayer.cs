@@ -1,4 +1,4 @@
-using AuroraLibrary.ConfigManager;
+using AuroraLibrary.Config;
 using AuroraLibrary.DatabaseModels;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -9,12 +9,13 @@ namespace AuroraDiscordBot.Commands;
 
 public class CreatePlayer : BaseCommandModule
 {
-    public RPGBotDBContext db {private get; set;}
+    public RPGBotDBContext db { private get; set; }
+    public Config _config { private get; set; }
 
     [Command("createplayer")]
     public async Task CreatePlayerCommand(CommandContext ctx)
     {
-        if(db.Players.Any(x => x.Id == ctx.User.Id))
+        if (db.Players.Any(x => x.Id == ctx.User.Id))
         {
             var failed = await ctx.RespondAsync("You already have a player");
             await Task.Delay(2000);
@@ -25,22 +26,20 @@ public class CreatePlayer : BaseCommandModule
 
 
         int startingGold = 0;
-        //Get the starting gold from the config file
-        if(!ConfigManager.AddToConfigAndError("StartingGold"))
-        {
-            startingGold = int.Parse(ConfigManager.Config["StartingGold"]);
-        }
+
+        startingGold = _config.GameSettings.StartingGold;
 
 
         List<DiscordMessage> messages = new List<DiscordMessage>();
         var message = await ctx.RespondAsync("What is your name?");
         messages.Add(message);
         var result = await ctx.Message.GetNextMessageAsync();
-        if(result.TimedOut == true)
+        if (result.TimedOut == true)
         {
             await ctx.RespondAsync("No response received");
             return;
         }
+
         messages.Add(result.Result);
         string playerName = result.Result.Content;
 
@@ -59,6 +58,7 @@ public class CreatePlayer : BaseCommandModule
         var response = await ctx.RespondAsync($"{playerName} has been created with {startingGold} gold");
         await Task.Delay(5000);
 
-        await ctx.Channel.DeleteMessagesAsync(new List<DiscordMessage> { message, result.Result, ctx.Message, response });
+        await ctx.Channel.DeleteMessagesAsync(
+            new List<DiscordMessage> { message, result.Result, ctx.Message, response });
     }
 }

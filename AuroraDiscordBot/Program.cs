@@ -1,35 +1,42 @@
-﻿using System.Configuration;
-using AuroraLibrary;
-using AuroraLibrary.ConfigManager;
-using AuroraLibrary.DatabaseModels;
+﻿using AuroraLibrary.Config;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 class Program
 {
+    private static Config _config = null!;
+
     static void Main(string[] args)
     {
-        ConfigManager.Initialize();
-
-
-        //Checking to see if any required config values are missing
-        bool allRequiredDoesNotExist = ConfigManager.AddToConfigAndError("ConnectionString");
-        allRequiredDoesNotExist = allRequiredDoesNotExist | ConfigManager.AddToConfigAndError("BotToken");
-
-        if(allRequiredDoesNotExist)
+        string configFile;
+        // Opens and reads config file
+        if (File.Exists("Config.json"))
         {
-            throw new System.Exception("One or more required config values are missing");
+            configFile = File.ReadAllText("Config.json");
+            if (String.IsNullOrWhiteSpace(configFile))
+            {
+                string outputConfigString = JsonConvert.SerializeObject(new Config(), Formatting.Indented);
+                File.WriteAllText("Config.json", outputConfigString);
+                Console.WriteLine("Config File Created, Please input required Data");
+                return;
+            }
+        }
+        else
+        {
+            string outputConfigString = JsonConvert.SerializeObject(new Config(), Formatting.Indented);
+            File.WriteAllText("Config.json", outputConfigString);
+            Console.WriteLine("Config File Created, Please input required Data");
+            return;
         }
 
+        _config = JsonConvert.DeserializeObject<Config>(configFile)!;
+
         MainAsync().GetAwaiter().GetResult();
-        
-
-
     }
 
     static async Task MainAsync()
@@ -37,24 +44,19 @@ class Program
         var services = new ServiceCollection();
         ConfigureServices(services);
 
+
         var serviceProvider = services.BuildServiceProvider();
         var dbContext = serviceProvider.GetService<RPGBotDBContext>();
 
         var discord = new DiscordClient(new DiscordConfiguration
         {
-            Token = ConfigManager.Config["BotToken"],
+            Token = _config.BotSettings.BotToken,
             TokenType = TokenType.Bot,
         });
 
-        string prefix;
-        if(ConfigManager.AddToConfigAndError("Prefix"))
-        {
-            prefix = "!";
-        }
-        else
-        {
-            prefix = ConfigManager.Config["Prefix"];
-        }
+        // Get prefix from config, if empty, default to !
+        string prefix = _config.BotSettings.Prefix;
+
 
         var commands = discord.UseCommandsNext(new CommandsNextConfiguration()
         {
@@ -62,7 +64,8 @@ class Program
             Services = serviceProvider,
         });
 
-        discord.UseInteractivity(new InteractivityConfiguration(){
+        discord.UseInteractivity(new InteractivityConfiguration()
+        {
             Timeout = TimeSpan.FromSeconds(120),
             ResponseBehavior = DSharpPlus.Interactivity.Enums.InteractionResponseBehavior.Ack,
         });
@@ -80,8 +83,8 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<RPGBotDBContext>(options => options.UseSqlServer(ConfigManager.Config["ConnectionString"]));
+        services.AddDbContext<RPGBotDBContext>(
+            options => options.UseSqlServer(_config.ConnectionSettings.ToString()));
+        services.AddSingleton(_config);
     }
-
-
 }

@@ -1,4 +1,4 @@
-using AuroraLibrary.ConfigManager;
+using AuroraLibrary.Config;
 using AuroraLibrary.DatabaseModels;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -11,6 +11,7 @@ public class Inventory : BaseCommandModule
 {
 
     public RPGBotDBContext db { private get; set; }
+    public Config _config { private get; set; }
 
     [Command("inventory")]
     public async Task InventoryCommand(CommandContext ctx)
@@ -20,11 +21,8 @@ public class Inventory : BaseCommandModule
 
         var interactivity = ctx.Client.GetInteractivity();
 
-        int maxItemsToShow = 5;
-        if (!ConfigManager.AddToConfigAndError("MaxItemsToShowInInventory"))
-        {
-            maxItemsToShow = Int32.Parse(ConfigManager.Config["MaxItemsToShowInInventory"]);
-        }
+        int maxItemsToShow = _config.GameSettings.MaxItemsToShowInInventory;
+        
 
         var items = db.Items.Where(x => x.Owner == player).ToList();
 
