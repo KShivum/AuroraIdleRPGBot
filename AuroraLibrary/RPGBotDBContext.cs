@@ -1,7 +1,9 @@
 using System.Configuration;
+using AuroraLibrary.Config;
 using AuroraLibrary.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 
 public class RPGBotDBContext : DbContext
@@ -19,13 +21,8 @@ public class RPGBotDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        IConfigurationRoot configuration = builder.Build();
-        
-        string conString = configuration.GetConnectionString("RPGBot");
-        optionsBuilder.UseSqlServer(conString);
+        Config config = JsonConvert.DeserializeObject<Config>(File.ReadAllText("Config.json"))!;
+        optionsBuilder.UseSqlServer(config.ConnectionSettings.ToString());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
