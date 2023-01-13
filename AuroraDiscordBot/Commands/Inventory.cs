@@ -4,27 +4,27 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuroraDiscordBot.Commands;
 
 public class Inventory : BaseCommandModule
 {
-
     public RPGBotDBContext db { private get; set; }
     public Config _config { private get; set; }
 
     [Command("inventory")]
     public async Task InventoryCommand(CommandContext ctx)
     {
-        Player? player = db.Players.FirstOrDefault(x => x.Id == ctx.User.Id);
+        Player? player = db.Players.Include(x => x.Items).AsNoTracking().FirstOrDefault(x => x.Id == ctx.User.Id);
         await new GlobalFunctions().CheckIfUserExists(ctx, player);
 
         var interactivity = ctx.Client.GetInteractivity();
 
         int maxItemsToShow = _config.GameSettings.MaxItemsToShowInInventory;
-        
 
-        var items = db.Items.Where(x => x.Owner == player).ToList();
+
+        var items = player.Items.ToList();
 
         int itemIndex = 0;
         while (1 == 1)
@@ -38,9 +38,11 @@ public class Inventory : BaseCommandModule
                 {
                     break;
                 }
+
                 inventoryString += "\n";
                 inventoryString += GetItemString(items[i]);
             }
+
             var embed = new DiscordEmbedBuilder
             {
                 Title = "Inventory",
@@ -69,48 +71,43 @@ public class Inventory : BaseCommandModule
 
             x = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnX", "❌");
 
-            var msg = await new DiscordMessageBuilder().WithEmbed(embed).AddComponents(new DiscordComponent[] { left, x, right }).SendAsync(ctx.Channel);
+            var msg = await new DiscordMessageBuilder().WithEmbed(embed)
+                .AddComponents(new DiscordComponent[] { left, x, right }).SendAsync(ctx.Channel);
 
             var result = await interactivity.WaitForButtonAsync(msg, TimeSpan.FromMinutes(2)).ConfigureAwait(false);
 
-            if(result.TimedOut)
+            if (result.TimedOut)
             {
                 await ctx.Channel.DeleteMessageAsync(msg);
                 return;
             }
-            else if(result.Result.Id == "btnLeft")
+            else if (result.Result.Id == "btnLeft")
             {
-                
                 itemIndex -= maxItemsToShow;
                 if (itemIndex < 0)
                 {
                     itemIndex = 0;
                 }
+
                 await ctx.Channel.DeleteMessageAsync(msg);
             }
-            else if(result.Result.Id == "btnRight")
+            else if (result.Result.Id == "btnRight")
             {
                 itemIndex += maxItemsToShow;
                 if (itemIndex > items.Count - 1)
                 {
                     itemIndex = items.Count - 1;
                 }
+
                 await ctx.Channel.DeleteMessageAsync(msg);
             }
-            else if(result.Result.Id == "btnX")
+            else if (result.Result.Id == "btnX")
             {
                 await ctx.Channel.DeleteMessageAsync(msg);
                 await ctx.Channel.DeleteMessageAsync(ctx.Message);
                 return;
             }
-            
-
-
         }
-
-
-
-
     }
 
     string GetItemString(Item item)
@@ -123,25 +120,28 @@ public class Inventory : BaseCommandModule
         {
             returnString += $"\n    Equipped: {item.Equipped}";
         }
+
         if (item.Atttribute1Label != null)
         {
             returnString += $"\n    {item.Atttribute1Label}: {item.Atttribute1Value}";
         }
+
         if (item.Atttribute2Label != null)
         {
             returnString += $"\n    {item.Atttribute2Label}: {item.Atttribute2Value}";
         }
+
         if (item.Atttribute3Label != null)
         {
             returnString += $"\n    {item.Atttribute3Label}: {item.Atttribute3Value}";
         }
+
         if (item.Atttribute4Label != null)
         {
             returnString += $"\n    {item.Atttribute4Label}: {item.Atttribute4Value}";
         }
+
         returnString += "\n";
         return returnString;
-
     }
-
 }

@@ -12,7 +12,7 @@ public class AdventureCommands : BaseCommandModule
     
     public RPGBotDBContext db { private get; set; }
 
-    List<AdventureBase> Adventures { get; set; } = new List<AdventureBase>
+    List<AdventureBase> Adventures { get; } = new()
     {
         new NewbieForest()
     };
@@ -46,7 +46,7 @@ public class AdventureCommands : BaseCommandModule
                 }
                 var response = await ctx.RespondAsync(responseString);
                 await Task.Delay(5000);
-                await ctx.Channel.DeleteMessagesAsync(new DiscordMessage[] { ctx.Message, response });
+                await ctx.Channel.DeleteMessagesAsync(new[] { ctx.Message, response });
                 return;
             }
             //Else is not needed as there is a return, but it reads a bit easier
@@ -60,7 +60,7 @@ public class AdventureCommands : BaseCommandModule
                 {
                     var response = await ctx.RespondAsync("You failed your adventure.");
                     await Task.Delay(5000);
-                    await ctx.Channel.DeleteMessagesAsync(new DiscordMessage[] { ctx.Message, response });
+                    await ctx.Channel.DeleteMessagesAsync(new[] { ctx.Message, response });
                     player.PassedAdventure = null;
                     await db.SaveChangesAsync();
                     return;
@@ -134,15 +134,12 @@ public class AdventureCommands : BaseCommandModule
             embed.AddField("Duration", duration);
             embed.WithFooter($"Page {index + 1} of {Adventures.Count}");
 
-            DiscordButtonComponent left, right, x;
+            var leftBool = index == 0;
+            var rightBool = index == Adventures.Count - 1;
 
-            bool leftBool, rightBool;
-            leftBool = index == 0;
-            rightBool = index == Adventures.Count - 1;
-
-            right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️", rightBool);
-            left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️", leftBool);
-            x = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "btnCheck", "✅");
+            var right = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnRight", "➡️", rightBool);
+            var left = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Primary, "btnLeft", "⬅️", leftBool);
+            var x = new DiscordButtonComponent(DSharpPlus.ButtonStyle.Success, "btnCheck", "✅");
 
             var msg = await new DiscordMessageBuilder().WithEmbed(embed).AddComponents(new DiscordComponent[] { left, x, right }).SendAsync(ctx.Channel);
 
@@ -153,7 +150,8 @@ public class AdventureCommands : BaseCommandModule
                 await ctx.Channel.DeleteMessageAsync(msg);
                 return;
             }
-            else if (result.Result.Id == "btnLeft")
+
+            if (result.Result.Id == "btnLeft")
             {
                 index--;
             }
@@ -165,17 +163,13 @@ public class AdventureCommands : BaseCommandModule
             {
                 player.StartedAdventure = DateTime.Now;
                 player.AdventureId = adventure.Id;
-                bool completedDungeon = false;
-                if (new Random().NextInt64(0, 101) <= (float)(.75 * (float)((float)player.Strength / (float)adventure.StrengthRecommended)) * 100)
-                {
-                    completedDungeon = true;
-                }
+                bool completedDungeon = new Random().NextInt64(0, 101) <= (float)(.75 * (float)((float)player.Strength / (float)adventure.StrengthRecommended)) * 100;
                 player.PassedAdventure = completedDungeon;
                 await db.SaveChangesAsync();
                 await ctx.Channel.DeleteMessageAsync(msg);
                 var reply = await ctx.RespondAsync("Adventure started!");
                 await Task.Delay(5000);
-                await ctx.Channel.DeleteMessagesAsync(new DiscordMessage[] { reply, ctx.Message });
+                await ctx.Channel.DeleteMessagesAsync(new[] { reply, ctx.Message });
                 return;
             }
 
