@@ -12,14 +12,14 @@ public class NewbieForest : AdventureBase
     public override int SpeedRecommended => 10;
     public override List<ItemChance> DropableItems { get; protected set; } = new List<ItemChance>
     {
+        //TODO: This will crash as I need to fix the types. Probably make an item model for sword and wild herb and use ef to find the type it needs
         new ItemChance
         {
             Item = new Item
             {
                 Name = "Wooden Sword",
                 Description = "An old wooden sword",
-                Type = ItemTypes.Sword,
-                Atttribute1Label = "Attack",
+                Model = db.ItemModels.First(x => x.Name.Equals("Wooden Sword")),
                 Atttribute1Value = 3
             },
             Chance = 20f
@@ -30,12 +30,16 @@ public class NewbieForest : AdventureBase
             {
                 Name = "Wild Herb",
                 Description = "A wild herb commonly used in medicine",
-                Type = ItemTypes.Material
+                Model = db.ItemModels.First(x => x.Name.Equals("Healing Grass")),
             },
             Chance = 35f
         },
 
         
     };
+
+    public NewbieForest(RPGBotDBContext db) : base(db)
+    {
+    }
 }
 

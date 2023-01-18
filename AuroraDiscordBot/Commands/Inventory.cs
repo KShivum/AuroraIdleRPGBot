@@ -115,30 +115,30 @@ public class Inventory : BaseCommandModule
         string returnString = "";
         returnString += $"{item.Name} ({item.Id}) - {item.Description}";
         returnString += $"\n    Value: {item.Value}";
-        returnString += $"\n    Type: {item.Type}";
+        //returnString += $"\n    Type: {item.Type}";
         if (item.Equipped != null)
         {
             returnString += $"\n    Equipped: {item.Equipped}";
         }
 
-        if (item.Atttribute1Label != null)
+        if (item.Model.Atttribute1Label != null)
         {
-            returnString += $"\n    {item.Atttribute1Label}: {item.Atttribute1Value}";
+            returnString += $"\n    {item.Model.Atttribute1Label}: {item.Atttribute1Value}";
         }
 
-        if (item.Atttribute2Label != null)
+        if (item.Model.Atttribute2Label != null)
         {
-            returnString += $"\n    {item.Atttribute2Label}: {item.Atttribute2Value}";
+            returnString += $"\n    {item.Model.Atttribute2Label}: {item.Atttribute2Value}";
         }
 
-        if (item.Atttribute3Label != null)
+        if (item.Model.Atttribute3Label != null)
         {
-            returnString += $"\n    {item.Atttribute3Label}: {item.Atttribute3Value}";
+            returnString += $"\n    {item.Model.Atttribute3Label}: {item.Atttribute3Value}";
         }
 
-        if (item.Atttribute4Label != null)
+        if (item.Model.Atttribute4Label != null)
         {
-            returnString += $"\n    {item.Atttribute4Label}: {item.Atttribute4Value}";
+            returnString += $"\n    {item.Model.Atttribute4Label}: {item.Atttribute4Value}";
         }
 
         returnString += "\n";

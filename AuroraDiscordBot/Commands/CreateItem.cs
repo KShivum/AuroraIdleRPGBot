@@ -13,6 +13,7 @@ public class CreateItem : BaseCommandModule
     [Command("createitem")]
     public async Task CreateItemCommand(CommandContext ctx)
     {
+        //TODO: Remake this
         Player? player = db.Players.FirstOrDefault(x => x.Id == ctx.User.Id);
         if(player == null)
         {
@@ -22,6 +23,8 @@ public class CreateItem : BaseCommandModule
             await ctx.Channel.DeleteMessageAsync(ctx.Message);
             return;
         }
+        
+        /*
 
         Item item = new Item()
         {
@@ -29,7 +32,7 @@ public class CreateItem : BaseCommandModule
             Name = "Sword",
             Description = "This is a new item",
             Value = 0,
-            Type = ItemTypes.Sword,
+            //Type = ItemTypes.Sword,
             Equipped = false,
             Atttribute1Label = "Attack",
             Atttribute1Value = 3,
@@ -39,6 +42,7 @@ public class CreateItem : BaseCommandModule
         var response = await ctx.RespondAsync($"{item.Name} has been created with {item.Value} gold");
         await Task.Delay(5000);
         await ctx.Channel.DeleteMessagesAsync(new DiscordMessage[] {ctx.Message, response});
+        */
     }
 
 }

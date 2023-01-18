@@ -11,6 +11,13 @@ namespace AuroraLibrary.Models
         public virtual int StrengthRecommended { get; protected set; } = 0;
         public virtual int SpeedRecommended { get; protected set; } = 0;
         public virtual List<ItemChance> DropableItems { get; protected set; } = new List<ItemChance>();
+
+        protected static RPGBotDBContext db;
+        
+        public AdventureBase(RPGBotDBContext dbContext)
+        {
+            db = dbContext;
+        }
     }
 
     public class ItemChance

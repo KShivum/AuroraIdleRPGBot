@@ -36,6 +36,10 @@ class Program
 
         _config = JsonConvert.DeserializeObject<Config>(configFile)!;
 
+        // This is so any new data that may not need to required will be written to the file
+        string rewriteFile = JsonConvert.SerializeObject(_config, Formatting.Indented);
+        File.WriteAllText("Config.json", rewriteFile);
+
         MainAsync().GetAwaiter().GetResult();
     }
 
@@ -75,6 +79,8 @@ class Program
         commands.RegisterCommands<AuroraDiscordBot.Commands.CreateItem>();
         commands.RegisterCommands<AuroraDiscordBot.Commands.Inventory>();
         commands.RegisterCommands<AuroraDiscordBot.Commands.AdventureCommands>();
+        if (_config.BotSettings.Debug)
+            commands.RegisterCommands<AuroraDiscordBot.Commands.DebugHelper>();
 
 
         await discord.ConnectAsync();

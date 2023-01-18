@@ -3,16 +3,18 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace AuroraDiscordBot.Migrations
+namespace AuroraLibrary.Migrations
 {
     [DbContext(typeof(RPGBotDBContext))]
-    partial class RPGBotDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230113004803_AddedBasicCraftingData")]
+    partial class AddedBasicCraftingData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,14 +31,26 @@ namespace AuroraDiscordBot.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Atttribute1Label")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Atttribute1Value")
                         .HasColumnType("int");
+
+                    b.Property<string>("Atttribute2Label")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Atttribute2Value")
                         .HasColumnType("int");
 
+                    b.Property<string>("Atttribute3Label")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Atttribute3Value")
                         .HasColumnType("int");
+
+                    b.Property<string>("Atttribute4Label")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Atttribute4Value")
                         .HasColumnType("int");
@@ -79,24 +93,9 @@ namespace AuroraDiscordBot.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Atttribute1Label")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Atttribute2Label")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Atttribute3Label")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Atttribute4Label")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rarity")
-                        .HasColumnType("int");
 
                     b.Property<int?>("RecipeId")
                         .HasColumnType("int");

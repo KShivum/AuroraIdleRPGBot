@@ -10,6 +10,8 @@ public class RPGBotDBContext : DbContext
 {
     public DbSet<Player> Players { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<ItemModel> ItemModels { get; set; }
+    public DbSet<Recipe> ItemRecipies { get; set; }
 
     public RPGBotDBContext()
     {

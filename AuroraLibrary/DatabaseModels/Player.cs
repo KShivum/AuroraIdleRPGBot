@@ -24,5 +24,6 @@ public class Player
     public int? AdventureId { get; set; }
     public bool? PassedAdventure { get; set; }
     public ICollection<Item> Items { get; set; }
+    public int CraftingXP { get; set; } = 0;
 
 }

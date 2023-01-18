@@ -12,14 +12,16 @@ public class AdventureCommands : BaseCommandModule
     
     public RPGBotDBContext db { private get; set; }
 
-    List<AdventureBase> Adventures { get; } = new()
-    {
-        new NewbieForest()
-    };
+    
 
     [Command("adventure")]
     public async Task AdventureCommand(CommandContext ctx)
     {
+        List<AdventureBase> Adventures = new()
+        {
+            new NewbieForest(db)
+        };
+        
         Player? player = db.Players.FirstOrDefault(x => x.Id == ctx.User.Id);
         new GlobalFunctions().CheckIfUserExists(ctx, player);
 
