@@ -8,8 +8,13 @@ public static class ConfigWriter
     }
 
     private static string ConfigWrite =$@"[BotConfiguration]
-BotToken=
-BotPrefix=";
+BotToken = 
+BotPrefix = 
+[DatabaseConfiguration]
+DatabaseUser = 
+DatabasePassword = 
+DatabaseName = 
+DatabaseHost = ";
 
 
 

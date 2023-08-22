@@ -16,6 +16,11 @@
 
     <ItemGroup>
       <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-01690" />
+      <PackageReference Include="EntityFramework" Version="6.4.4" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
