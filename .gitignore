@@ -7,7 +7,7 @@
 *.sln.docstates
 
 *.ini
-
+.idea/
 # Build results
 
 [Dd]ebug/
