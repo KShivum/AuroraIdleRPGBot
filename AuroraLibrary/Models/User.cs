@@ -8,4 +8,6 @@ public class User
     public ulong? DiscordSnowflake { get; set; }
     [Required, StringLength(32)] public string Name { get; set; }
     [Required] public int XP { get; set; } = 0;
+
+    public ICollection<Item> OwnedItems { get; set; } = new List<Item>();
 }
