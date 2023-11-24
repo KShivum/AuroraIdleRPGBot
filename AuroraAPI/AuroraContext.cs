@@ -8,7 +8,11 @@ public class AuroraContext : DbContext
     public AuroraContext(DbContextOptions<AuroraContext> options) : base(options)
     {
     }
+    
+    public AuroraContext()
+    {
+    }
 
-    public DbSet<User> Users { get; set; } = null;
-    public DbSet<Item> Items { get; set; } = null;
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Item> Items { get; set; }
 }
