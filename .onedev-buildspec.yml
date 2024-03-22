@@ -1,0 +1,35 @@
+version: 30
+jobs:
+- name: Push To GitHub
+  steps:
+  - !PushRepository
+    name: push
+    remoteUrl: https://github.com/KShivum/AuroraIdleRPGBot
+    passwordSecret: access-token
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+- name: Pull From Github
+  steps:
+  - !PullRepository
+    name: pull
+    remoteUrl: https://github.com/KShivum/AuroraIdleRPGBot
+    syncToChildProject: false
+    userName: KShivum
+    passwordSecret: access-token
+    refs: refs/heads/* refs/tags/*
+    withLfs: false
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !ScheduleTrigger
+    cronExpression: 0 0 1 * * ?
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
