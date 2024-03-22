@@ -33,3 +33,57 @@ jobs:
   maxRetries: 3
   retryDelay: 30
   timeout: 3600
+- name: dotnet ci
+  steps:
+  - !CheckoutStep
+    name: checkout code
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !GenerateChecksumStep
+    name: generate project checksum
+    files: '**/*.csproj'
+    targetFile: checksum
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !SetupCacheStep
+    name: set up nuget cache
+    key: nuget_packages_@file:checksum@
+    loadKeys:
+    - nuget_packages
+    paths:
+    - /root/.nuget/packages
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: run tests
+    runInContainer: true
+    image: mcr.microsoft.com/dotnet/sdk
+    interpreter: !DefaultInterpreter
+      commands: |
+        dotnet tool install -g roslynator.dotnet.cli
+        dotnet test -l trx --collect:"XPlat Code Coverage"
+        /root/.dotnet/tools/roslynator analyze -o roslynator-analysis.xml
+    useTTY: true
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !PublishTRXReportStep
+    name: publish unit test report
+    reportName: Unit Test
+    filePatterns: '**/*.trx'
+    condition: ALWAYS
+  - !PublishCoberturaReportStep
+    name: publish code coverage report
+    reportName: Code Coverage
+    filePatterns: '**/coverage.cobertura.xml'
+    condition: ALWAYS
+  - !PublishRoslynatorReportStep
+    name: publish code problem report
+    reportName: Code Problems
+    filePatterns: roslynator-analysis.xml
+    condition: ALWAYS
+  triggers:
+  - !BranchUpdateTrigger {}
+  - !PullRequestUpdateTrigger {}
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
