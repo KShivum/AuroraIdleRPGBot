@@ -60,9 +60,7 @@ jobs:
     image: mcr.microsoft.com/dotnet/sdk
     interpreter: !DefaultInterpreter
       commands: |
-        dotnet tool install -g roslynator.dotnet.cli
         dotnet test -l trx --collect:"XPlat Code Coverage"
-        /root/.dotnet/tools/roslynator analyze -o roslynator-analysis.xml
     useTTY: true
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
   - !PublishTRXReportStep
